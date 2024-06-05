@@ -1,1 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.mat-mdc-card {
+  box-shadow: none;
+}
+
+.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+  border-right-style: hidden;
+  box-shadow: none;
+}
+
+
+html,
+body {
+  background-color: #f0f4f8;
+  height: 100%;
+}
+
+app-root {
+  min-height: 100vh;
+}

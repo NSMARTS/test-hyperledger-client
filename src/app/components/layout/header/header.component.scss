@@ -1,0 +1,53 @@
+.header {
+  background-color: #343a40;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+
+  p {
+    color: #f8f9fa; // 로고 또는 헤더 타이틀 색상
+  }
+
+  .header_router {
+    justify-content: space-between;
+
+    a,
+    a:link,
+    a:visited {
+      // 기본 상태, 링크를 처음 보았을 때, 방문한 링크 상태
+      color: #79c0ff; // 링크 기본 색상
+      text-decoration: none;
+      margin-bottom: 1rem;
+      margin-right: 1rem;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #0069d9; // 링크 호버 시 색상
+      }
+    }
+  }
+}
+
+// 태블릿 및 데스크톱 화면을 위한 미디어 쿼리
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+
+    .header_router {
+      flex-direction: row;
+      // align-items: center;
+      justify-content: space-between;
+
+      a {
+        margin-right: 2rem;
+        margin-bottom: 0;
+      }
+
+      // 마지막 링크의 margin-right 제거
+      a:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}

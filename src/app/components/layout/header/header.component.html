@@ -1,0 +1,24 @@
+<header>
+  <div class="header">
+    <p>
+      @if(!userInfo()){
+      main
+      }@else{
+      {{companyName}}
+      }
+    </p>
+    <div class="header_router">
+      @if(!userInfo()){
+      <a [routerLink]="'/sign-in'">로그인</a>
+      <a [routerLink]="'/sign-up'">회원가입</a>
+      }@else{
+      <a [routerLink]="'/orders'">주문내역</a>
+      @if(userInfo()?.auth==="admin"){
+      <a [routerLink]="'/users'">회원목록</a>
+      }
+      <a (click)="signOut()">로그아웃</a>
+      }
+
+    </div>
+  </div>
+</header>

@@ -1,0 +1,34 @@
+<p>주문 수정</p>
+<form [formGroup]="form" (submit)="updateOrder()">
+  <div formArrayName="orders">
+    @for (orderControl of orders.controls; let index = $index; track orderControl) {
+    <div [formGroupName]="index" class="flex items-center space-x-2 mb-2">
+      <mat-form-field class="flex-1">
+        <mat-select formControlName="food" (selectionChange)="onFoodSelect($event, index)">
+          @for (food of foodList; track food) {
+          <mat-option [value]="food.value">{{food.name}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <p class="w-20">{{orderControl.value.price}} 원</p>
+      <p class="w-16">{{orderControl.value.count}} 개</p>
+      <button mat-button type="button" (click)="increaseCount(index)" class="w-8 h-8">+</button>
+      <button mat-button type="button" (click)="decreaseCount(index)" class="w-8 h-8">-</button>
+      <button mat-button type="button" (click)="deleteFood(index)" class="w-8 h-8">삭제</button>
+    </div>
+    }
+  </div>
+
+  <button mat-button type="button" (click)="addFood()">추가</button>
+  <div class="mt-4">
+    <mat-form-field class="w-full">
+      <mat-label>총 금액</mat-label>
+      <input matInput formControlName="totalCount" type="number" required>
+    </mat-form-field>
+    <mat-form-field class="w-full">
+      <mat-label>배송지</mat-label>
+      <input matInput formControlName="to" type="text" required>
+    </mat-form-field>
+  </div>
+  <button mat-button type="submit">수정</button>
+</form>
