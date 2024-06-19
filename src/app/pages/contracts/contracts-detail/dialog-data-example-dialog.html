@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>서명</h2>
+<mat-dialog-content>
+
+  <div #canvasContainer class=" canvas-container bg-slate-100">
+    <canvas #canvas class="canvas"></canvas>
+    <canvas #cover class="cover"></canvas>
+  </div>
+
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+  @if(data?.mode=='sign'){
+  <button mat-button (click)="signContract()">Sign</button>
+  }
+</mat-dialog-actions>

@@ -13,6 +13,7 @@
       <a [routerLink]="'/sign-up'">회원가입</a>
       }@else{
       <a [routerLink]="'/orders'">주문내역</a>
+      <a [routerLink]="'/contracts'">계약내역</a>
       @if(userInfo()?.auth==="admin"){
       <a [routerLink]="'/users'">회원목록</a>
       }

@@ -1,1 +1,15 @@
-<p>contracts-add works!</p>
+<form [formGroup]="form" (submit)="onSubmit()">
+  <input mat-input type="text" formControlName="title" placeholder="제목" />
+  <input mat-input type="text" formControlName="receiverA" placeholder="받는 이 A email" />
+  <input mat-input type="text" formControlName="receiverB" placeholder="받는 이 B email" />
+  <button type="submit" mat-raised-button color="primary">계약서 등록</button>
+
+</form>
+<input #pdfInput type="file" (change)="handleUploadFileChanged($event)" style="display:none;" accept=".pdf" />
+<button mat-raised-button color="primary" (click)="pdfInput.click()"> PDF 업로드 </button>
+
+<div #canvasContainer class="canvas-container">
+  <div class="canvasBackground">
+    <canvas id="myCanvas" #bg></canvas>
+  </div>
+</div>

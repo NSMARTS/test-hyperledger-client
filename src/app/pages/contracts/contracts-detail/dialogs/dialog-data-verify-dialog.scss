@@ -1,0 +1,19 @@
+.canvas-container {
+  position: relative;
+  // border: 1px solid #dddddd;
+  // border-bottom: 1px solid #dddddd;
+
+  .canvas {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
