@@ -51,7 +51,6 @@ export class OrdersAddComponent {
   ];
 
   form: FormGroup = this.fb.group({
-    // : this.foodControl.value,
     orders: this.fb.array([]),
     totalCount: [0],
     to: ['', Validators.required], //배송지
