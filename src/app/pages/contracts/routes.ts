@@ -4,11 +4,6 @@ import { ContractsAddComponent } from './contracts-add/contracts-add.component';
 import { ContractsDetailComponent } from './contracts-detail/contracts-detail.component';
 import { ContractsUpdateComponent } from './contracts-update/contracts-update.component';
 
-
-
-
-
-
 export const CONTRACTS_ROUTES: Route[] = [
   {
     path: '', // 계약서 리스트

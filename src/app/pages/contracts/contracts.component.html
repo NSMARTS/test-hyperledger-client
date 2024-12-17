@@ -1,11 +1,12 @@
-<button mat-button (click)="route.navigate(['/contracts/add'])">계약하기</button>
+<button mat-button (click)="route.navigate(['/contracts/add'])">
+  계약하기
+</button>
 <div class="example-container mat-elevation-z8">
   @if (isLoadingResults() || isRateLimitReached()) {
   <div class="example-loading-shade">
     @if (isLoadingResults()) {
     <mat-spinner></mat-spinner>
-    }
-    @if (isRateLimitReached()) {
+    } @if (isRateLimitReached()) {
     <div class="example-rate-limit-reached">
       GitHub's API rate limit has been reached. It will be reset in one minute.
     </div>
@@ -14,51 +15,67 @@
   }
 
   <div class="example-table-container">
-
-    <table mat-table [dataSource]="dataSource()" class="example-table" class="mat-elevation-z8 historyTable" matSort
-      matSortActive="createdAt" matSortDisableClear matSortDirection="desc">
+    <table
+      mat-table
+      [dataSource]="dataSource()"
+      class="example-table"
+      class="mat-elevation-z8 historyTable"
+      matSort
+      matSortActive="createdAt"
+      matSortDisableClear
+      matSortDirection="desc"
+    >
       <!-- Created Column -->
       <ng-container matColumnDef="createdAt">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
           Created
         </th>
-        <td mat-cell *matCellDef="let row">{{row.createdAt | date}}</td>
+        <td mat-cell *matCellDef="let row">{{ row.createdAt | date }}</td>
       </ng-container>
 
       <ng-container matColumnDef="to">
         <th mat-header-cell *matHeaderCellDef>to</th>
-        <td mat-cell *matCellDef="let row">{{row.to}}</td>
+        <td mat-cell *matCellDef="let row">{{ row.to }}</td>
       </ng-container>
 
       <!-- Title Column -->
       <ng-container matColumnDef="writer">
         <th mat-header-cell *matHeaderCellDef>writer</th>
-        <td mat-cell *matCellDef="let row">{{row.writer.email}}</td>
+        <td mat-cell *matCellDef="let row">{{ row.writer.email }}</td>
       </ng-container>
 
       <!-- State Column -->
       <ng-container matColumnDef="totalCount">
         <th mat-header-cell *matHeaderCellDef>totalCount</th>
-        <td mat-cell *matCellDef="let row">{{row.totalCount}}</td>
+        <td mat-cell *matCellDef="let row">{{ row.totalCount }}</td>
       </ng-container>
 
       <!-- button Column -->
       <ng-container matColumnDef="bts">
         <th mat-header-cell *matHeaderCellDef>bts</th>
         <td mat-cell *matCellDef="let row">
-          <button mat-button (click)="updateContract($event,row._id)">update</button>
-          <button mat-button (click)="deleteContract($event,row._id)">delete</button>
+          <button mat-button (click)="updateContract($event, row._id)">
+            update
+          </button>
+          <button mat-button (click)="deleteContract($event, row._id)">
+            delete
+          </button>
         </td>
       </ng-container>
 
-
-
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="route.navigate(['/contracts/',row._id])">
-      </tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        (click)="route.navigate(['/contracts/', row._id])"
+      ></tr>
     </table>
   </div>
 
-  <mat-paginator [length]="resultsLength()" [pageSize]="pageSize()" [pageSizeOptions]="[5, 10, 25]"
-    showFirstLastButtons></mat-paginator>
+  <mat-paginator
+    [length]="resultsLength()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="[5, 10, 25]"
+    showFirstLastButtons
+  ></mat-paginator>
 </div>
