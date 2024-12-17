@@ -15,10 +15,9 @@ export const isLoggedInGuard: CanActivateFn = (
   const router = inject(Router);
   const routePath = route.routeConfig?.path ?? ''; // ?? 은 타입스크립트 문법으로 undefined || null 이면 ''로 주겠다.
   // const isLoggedIn = window.localStorage.getItem('isLoggedIn')
-  const isLoggedIn = authService.isLoggedIn()
+  const isLoggedIn = authService.isLoggedIn();
 
   if (isLoggedIn) {
-    console.log(isLoggedIn)
     if (['sign-in', 'sign-up'].includes(routePath)) {
       router.navigate(['/']);
     }

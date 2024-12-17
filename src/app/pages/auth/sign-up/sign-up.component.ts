@@ -1,7 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MaterialsModule } from '../../../materials/materials.module';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 
@@ -19,47 +27,38 @@ export const comparePasswordValidator: ValidatorFn = (
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [CommonModule, MaterialsModule,],
+  imports: [CommonModule, MaterialsModule],
   templateUrl: './sign-up.component.html',
-  styleUrl: './sign-up.component.scss'
+  styleUrl: './sign-up.component.scss',
 })
 export class SignUpComponent {
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private authService = inject(AuthService);
 
-  private fb = inject(FormBuilder)
-  private router = inject(Router)
-  private authService = inject(AuthService)
+  companies: any[] = ['naver', 'delivery', 'restaurant'];
 
-
-  companies: any[] = [
-    'naver',
-    'delivery',
-    'restaurant',
-  ]
-
-
-  signUpForm: FormGroup = this.fb.group({
-    selectedCompany: ['naver', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
-    confirmPassword: ['', [Validators.required]],
-    auth: ['admin', [Validators.required]]
-  }, {
-    validators: comparePasswordValidator
-  });
+  signUpForm: FormGroup = this.fb.group(
+    {
+      selectedCompany: ['naver', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+      confirmPassword: ['', [Validators.required]],
+      auth: ['admin', [Validators.required]],
+    },
+    {
+      validators: comparePasswordValidator,
+    }
+  );
 
   signUp() {
-    console.log(this.signUpForm.value)
     this.authService.signUp(this.signUpForm.value).subscribe({
       next: () => {
-        this.router.navigate(['/sign-in'])
+        this.router.navigate(['/sign-in']);
       },
-      error: () => { }
-    })
+      error: () => {},
+    });
   }
 
-  cancel() {
-
-  }
-
-
+  cancel() {}
 }

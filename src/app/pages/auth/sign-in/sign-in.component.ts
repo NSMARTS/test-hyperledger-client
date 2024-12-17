@@ -12,11 +12,11 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, MaterialsModule],
   templateUrl: './sign-in.component.html',
-  styleUrl: './sign-in.component.scss'
+  styleUrl: './sign-in.component.scss',
 })
 export class SignInComponent {
-  authService = inject(AuthService)
-  router = inject(Router)
+  authService = inject(AuthService);
+  router = inject(Router);
 
   companies: any[] = [
     {
@@ -30,9 +30,11 @@ export class SignInComponent {
     {
       name: '음식점',
       value: 'RestaurantMSP',
-    }
-  ]
-  companyControl = new FormControl(this.companies[0].value, [Validators.required]);
+    },
+  ];
+  companyControl = new FormControl(this.companies[0].value, [
+    Validators.required,
+  ]);
 
   emailControl = new FormControl('', [Validators.required, Validators.email]);
 
@@ -41,16 +43,15 @@ export class SignInComponent {
   form: FormGroup = new FormGroup({
     org: this.companyControl,
     email: this.emailControl,
-    password: this.passwordControl
-  })
+    password: this.passwordControl,
+  });
 
   signIn() {
-    console.log(this.form.value)
     this.authService.signIn(this.form.value).subscribe({
       next: () => {
-        this.router.navigate(['/'])
+        this.router.navigate(['/']);
       },
-      error: () => { }
-    })
+      error: () => {},
+    });
   }
 }

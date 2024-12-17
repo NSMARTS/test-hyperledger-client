@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, WritableSignal, inject, signal } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  WritableSignal,
+  inject,
+  signal,
+} from '@angular/core';
 import { MaterialsModule } from '../../materials/materials.module';
 import { Router } from '@angular/router';
 import { ContractsService } from '../../services/contracts/contracts.service';
@@ -13,14 +19,22 @@ import { catchError, map, merge, of, startWith, switchMap } from 'rxjs';
   standalone: true,
   imports: [CommonModule, MaterialsModule],
   templateUrl: './contracts.component.html',
-  styleUrl: './contracts.component.scss'
+  styleUrl: './contracts.component.scss',
 })
 export class ContractsComponent {
-  route = inject(Router)
-  contractsService = inject(ContractsService)
+  route = inject(Router);
+  contractsService = inject(ContractsService);
 
-  displayedColumns: string[] = ['createdAt', 'writer', 'totalCount', 'to', 'bts'];
-  dataSource: WritableSignal<MatTableDataSource<any>> = signal<MatTableDataSource<any>>(new MatTableDataSource());
+  displayedColumns: string[] = [
+    'createdAt',
+    'writer',
+    'totalCount',
+    'to',
+    'bts',
+  ];
+  dataSource: WritableSignal<MatTableDataSource<any>> = signal<
+    MatTableDataSource<any>
+  >(new MatTableDataSource());
 
   pageSize = signal<number>(10);
   resultsLength = signal<number>(0);
@@ -30,10 +44,9 @@ export class ContractsComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor() { }
+  constructor() {}
 
   ngAfterViewInit() {
-
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
@@ -42,7 +55,7 @@ export class ContractsComponent {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults.set(true);
-          return this.fetchContracts()
+          return this.fetchContracts();
         }),
         map((res: any) => {
           // Flip flag to show that loading has finished.
@@ -59,18 +72,22 @@ export class ContractsComponent {
           this.resultsLength.set(res.data.length);
           // this.calculateTenure(res.myEmployeeList);
           return res.data;
-        }),
+        })
       )
-      .subscribe((data: any) => this.dataSource.set(new MatTableDataSource(data)))
+      .subscribe((data: any) =>
+        this.dataSource.set(new MatTableDataSource(data))
+      );
   }
 
   fetchContracts() {
-    return this.contractsService.getContracts(
-      this.sort.active,
-      this.sort.direction,
-      this.paginator.pageIndex,
-      this.paginator.pageSize,
-    ).pipe(catchError(() => of(null)));
+    return this.contractsService
+      .getContracts(
+        this.sort.active,
+        this.sort.direction,
+        this.paginator.pageIndex,
+        this.paginator.pageSize
+      )
+      .pipe(catchError(() => of(null)));
   }
 
   refreshTable() {
@@ -83,22 +100,21 @@ export class ContractsComponent {
 
   updateContract(event: Event, id: string) {
     event.stopPropagation();
-    this.route.navigate([`/contracts/${id}/edit`])
+    this.route.navigate([`/contracts/${id}/edit`]);
   }
   deleteContract(event: Event, id: string) {
     event.stopPropagation();
     this.isLoadingResults.set(true);
     this.contractsService.deleteContract(id).subscribe({
       next: (res: any) => {
-        console.log(res)
-        this.refreshTable()
+        this.refreshTable();
       },
       error: (err: any) => {
-        console.error(err)
+        console.error(err);
       },
       complete: () => {
         this.isLoadingResults.set(false);
-      }
-    })
+      },
+    });
   }
 }
