@@ -3,23 +3,22 @@ import { CANVAS_CONFIG } from '../../config/canvas-css';
 import { PdfService } from '../pdf/pdf.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ZoomService {
-  pdfService = inject(PdfService)
-  pdfInfo: WritableSignal<any> = this.pdfService.pdfInfo
+  pdfService = inject(PdfService);
+  pdfInfo: WritableSignal<any> = this.pdfService.pdfInfo;
 
-  zoomScale = signal<number>(1)
+  zoomScale = signal<number>(1);
 
   maxZoomScale = CANVAS_CONFIG.maxZoomScale;
   minZoomScale = CANVAS_CONFIG.minZoomScale;
-  constructor() { }
+  constructor() {}
   setInitZoomScale() {
     const containerSize = {
       width: CANVAS_CONFIG.maxContainerWidth,
-      height: CANVAS_CONFIG.maxContainerHeight
+      height: CANVAS_CONFIG.maxContainerHeight,
     };
-
 
     if (!this.pdfInfo().pdfPages || this.pdfInfo().pdfPages.length === 0) {
       return this.zoomScale();
@@ -27,46 +26,36 @@ export class ZoomService {
 
     const pdfPage: any = this.pdfInfo().pdfPages[0];
 
-    // console.log(pdfPage)
     const docSize = pdfPage.getViewport({ scale: 1 * CANVAS_CONFIG.CSS_UNIT }); // 100%에 해당하는 document의 size (Css 기준)
 
     const ratio = {
       w: containerSize.width / docSize.width,
-      h: containerSize.height / docSize.height
+      h: containerSize.height / docSize.height,
     };
 
-    // console.log(ratio)
     // 1. main container size보다 작은 경우
     if (ratio.w >= 1 && ratio.h >= 1) {
-      // console.log(' - 문서가 container보다 작음.');
       // fit To page
       this.zoomScale.set(Math.min(ratio.w, ratio.h));
     }
 
     // 2. landscape 문서인 경우
     else if (docSize.width > docSize.height) {
-      // console.log(' - 문서: Landscape');
       // fit To Page
       this.zoomScale.set(Math.min(ratio.w, ratio.h));
     }
     // 3, portrait 문서인 경우
     else if (docSize.width <= docSize.height && ratio.w < 1) {
-      // console.log(' - 문서: Portrait');
-      // console.log(' - 문서 Width가 container보다 넓습니다.');
       this.zoomScale.set(ratio.w);
-
     }
 
     this.zoomScale.set(Math.min(this.zoomScale(), CANVAS_CONFIG.maxZoomScale));
     this.zoomScale.set(Math.max(this.zoomScale(), CANVAS_CONFIG.minZoomScale));
 
-    console.log(' - Init zoom Scale : ', this.zoomScale());
-
     return this.zoomScale();
   }
   // zoomscale 결정(zoomin, zoomout, fit to page .... etc)
   calcZoomScale(zoomInfo: string, pageNum: number, prevZoomScale = 1) {
-
     let zoomScale = 1;
 
     switch (zoomInfo) {
@@ -93,10 +82,10 @@ export class ZoomService {
   }
 
   /**
-   * 
+   *
    * @param currentScale 현재 비율
    * @param sgn 스케일 증가 +1  감소-1
-   * @returns 
+   * @returns
    */
   calcNewZoomScale(currentScale: number, sgn: number) {
     let step;
@@ -107,20 +96,15 @@ export class ZoomService {
       if (prevScale < 1.1) step = 0.1;
       else if (prevScale < 2) step = 0.2;
       else step = 0.3;
-    }
-    else {
+    } else {
       if (prevScale <= 1.1) step = 0.1;
       else if (prevScale <= 2.1) step = 0.2;
       else step = 0.3;
     }
 
-
-
     let newScale = Math.round((prevScale + step * sgn) * 10) / 10;
     newScale = Math.min(newScale, this.maxZoomScale);
     newScale = Math.max(newScale, this.minZoomScale);
-
-    console.log('new Scale:', newScale);
 
     return newScale;
   }
@@ -129,7 +113,7 @@ export class ZoomService {
   fitToWidth(currentPage: number) {
     const containerSize = {
       width: CANVAS_CONFIG.maxContainerWidth - 278, // 좌측 navigation width만큼 빼야 fitToWidth 시 폭에 맞다.
-      height: CANVAS_CONFIG.maxContainerHeight
+      height: CANVAS_CONFIG.maxContainerHeight,
     };
     const pdfPage: any = this.pdfService.pdfInfo().pdfPages[currentPage - 1];
     const docSize = pdfPage.getViewport({ scale: 1 * CANVAS_CONFIG.CSS_UNIT });
@@ -143,7 +127,7 @@ export class ZoomService {
   fitToPage(currentPage: number) {
     const containerSize = {
       width: CANVAS_CONFIG.maxContainerWidth,
-      height: CANVAS_CONFIG.maxContainerHeight
+      height: CANVAS_CONFIG.maxContainerHeight,
     };
 
     const pdfPage: any = this.pdfService.pdfInfo().pdfPages[currentPage - 1];
@@ -151,7 +135,7 @@ export class ZoomService {
 
     const ratio = {
       w: containerSize.width / docSize.width,
-      h: containerSize.height / docSize.height
+      h: containerSize.height / docSize.height,
     };
 
     const zoomScale = Math.min(ratio.h, ratio.w);

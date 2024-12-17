@@ -5,15 +5,15 @@ import { DrawingService } from '../drawing/drawing.service';
 import { CANVAS_CONFIG } from '../../config/canvas-css';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RenderingService {
-  pdfService = inject(PdfService)
-  drawingService = inject(DrawingService)
-  pdfInfo: WritableSignal<any | null> = this.pdfService.pdfInfo
+  pdfService = inject(PdfService);
+  drawingService = inject(DrawingService);
+  pdfInfo: WritableSignal<any | null> = this.pdfService.pdfInfo;
   isPageRendering: boolean = false;
   pageNumPending: number | null = null;
-  constructor() { }
+  constructor() {}
 
   /**
    * Thumbnail의 배경 rendering
@@ -23,14 +23,12 @@ export class RenderingService {
    * @param {element} canvas <canvas>
    */
   async renderThumbBackground(imgElement: HTMLImageElement, pageNum: number) {
-    // console.log('> renderThumbnail Background');
     // const pdfPage = this.pdfStorageService.getPdfPage(pageNum);
     const pdfPage = this.pdfInfo().pdfPages[pageNum - 1];
 
-
     // 배경 처리를 위한 임시 canvas
     const tmpCanvas = document.createElement('canvas');
-    const tmpCtx = tmpCanvas.getContext("2d")!;
+    const tmpCtx = tmpCanvas.getContext('2d')!;
 
     // 1/2 scale로 설정 (임시)
     const viewport = pdfPage.getViewport({ scale: 0.5 });
@@ -40,7 +38,7 @@ export class RenderingService {
     try {
       const renderContext = {
         canvasContext: tmpCtx,
-        viewport
+        viewport,
       };
       /*-----------------------------------
         pdf -> tmpCanvas -> image element
@@ -50,23 +48,22 @@ export class RenderingService {
       imgElement.src = tmpCanvas.toDataURL();
 
       return true;
-
     } catch (err) {
       console.log(err);
       return false;
     }
   }
 
-
   /**
    * Main Board의 Background rendering
    * - pending 처리 포함
    * @param pageNum page 번호
    */
-  async renderBackground(tmpCanvas: HTMLCanvasElement, bgCanvas: HTMLCanvasElement, pageNum: number) {
-    console.log(`>>>> renderBackground, pageNum: ${pageNum}`);
-
-
+  async renderBackground(
+    tmpCanvas: HTMLCanvasElement,
+    bgCanvas: HTMLCanvasElement,
+    pageNum: number
+  ) {
     const pdfPage = this.pdfInfo().pdfPages[pageNum - 1];
 
     if (!pdfPage) {
@@ -74,7 +71,6 @@ export class RenderingService {
     }
 
     if (this.isPageRendering) {
-      // console.log(' ---> pending!!! ');
       this.pageNumPending = pageNum;
     } else {
       this.isPageRendering = true;
@@ -90,8 +86,6 @@ export class RenderingService {
     }
   }
 
-
-
   /**
    * 공통 Rendering function
    * - tmpcanvas를 이용해서 target Canvas에 pdf draw
@@ -100,8 +94,11 @@ export class RenderingService {
    * @param {pdfPage} page  pdfPage
    * @param {element} targetCanvas bgcanvas
    */
-  async rendering(page: PDFPageProxy, targetCanvas: HTMLCanvasElement, tmpCanvas: HTMLCanvasElement) {
-
+  async rendering(
+    page: PDFPageProxy,
+    targetCanvas: HTMLCanvasElement,
+    tmpCanvas: HTMLCanvasElement
+  ) {
     if (!page) {
       return false;
     }
@@ -109,8 +106,10 @@ export class RenderingService {
     const viewport = page.getViewport({ scale: 1 });
     const ctx = targetCanvas.getContext('2d')!;
 
-    const bgImgSize = { width: targetCanvas.width, height: targetCanvas.height };
-
+    const bgImgSize = {
+      width: targetCanvas.width,
+      height: targetCanvas.height,
+    };
 
     try {
       const scale = targetCanvas.width / viewport.width;
@@ -123,22 +122,17 @@ export class RenderingService {
         tmpCanvasScaling = CANVAS_CONFIG.deviceScale;
       }
 
-      // console.log('bgimgsize: ', bgImgSize);
-      // console.log('device scale: ', CONFIG.deviceScale);
+      tmpCanvas.width =
+        (bgImgSize.width * tmpCanvasScaling) / CANVAS_CONFIG.deviceScale;
 
-      // console.log('tmp canvas scaling: ', tmpCanvasScaling);
-
-      tmpCanvas.width = bgImgSize.width * tmpCanvasScaling / CANVAS_CONFIG.deviceScale;
-
-      tmpCanvas.height = bgImgSize.height * tmpCanvasScaling / CANVAS_CONFIG.deviceScale;
-
-      // console.log('rendering tmpcanvas: ', tmpCanvas);
+      tmpCanvas.height =
+        (bgImgSize.height * tmpCanvasScaling) / CANVAS_CONFIG.deviceScale;
 
       const zoomScale = tmpCanvas.width / viewport.width;
       const tmpCtx = tmpCanvas.getContext('2d')!;
       const renderContext = {
         canvasContext: tmpCtx,
-        viewport: page.getViewport({ scale: zoomScale })
+        viewport: page.getViewport({ scale: zoomScale }),
       };
 
       // tmpCanvas에 pdf 그리기
@@ -156,25 +150,31 @@ export class RenderingService {
       }
 
       return true;
-
     } catch (err) {
       console.log(err);
       return false;
     }
   }
 
-
   /**
- * Teacher Canvas의 board rendering
- * @param {element} targetCanvas canvas element
- * @param {number} zoomScale zoomScale
- * @param {Object} drawingEvents 판서 event (tool, points, timeDiff)
- */
-  renderBoard(targetCanvas: HTMLCanvasElement, zoomScale: number, drawingEvents: any) {
-    console.log('renderBoard')
+   * Teacher Canvas의 board rendering
+   * @param {element} targetCanvas canvas element
+   * @param {number} zoomScale zoomScale
+   * @param {Object} drawingEvents 판서 event (tool, points, timeDiff)
+   */
+  renderBoard(
+    targetCanvas: HTMLCanvasElement,
+    zoomScale: number,
+    drawingEvents: any
+  ) {
     const targetCtx = targetCanvas.getContext('2d')!;
     const scale = zoomScale || 1;
-    targetCtx.clearRect(0, 0, targetCanvas.width / scale, targetCanvas.height / scale);
+    targetCtx.clearRect(
+      0,
+      0,
+      targetCanvas.width / scale,
+      targetCanvas.height / scale
+    );
 
     /*----------------------------------------
       해당 page의 drawing 정보가 있는 경우
@@ -184,7 +184,6 @@ export class RenderingService {
     // 전체 redraw
     if (drawingEvents?.drawingEvent && drawingEvents?.drawingEvent.length > 0) {
       for (const item of drawingEvents?.drawingEvent) {
-        console.log(drawingEvents)
         this.drawingService.end(targetCtx, item.points, item.tool);
       }
     }
