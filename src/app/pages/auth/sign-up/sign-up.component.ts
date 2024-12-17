@@ -4,7 +4,6 @@ import { MaterialsModule } from '../../../materials/materials.module';
 import {
   AbstractControl,
   FormBuilder,
-  FormControl,
   FormGroup,
   ValidationErrors,
   ValidatorFn,

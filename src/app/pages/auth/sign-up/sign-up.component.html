@@ -1,6 +1,5 @@
 <div class="sign-up-container">
   <mat-card class="sign-up-container__card">
-
     <p>회원가입</p>
 
     <form [formGroup]="signUpForm" (submit)="signUp()">
@@ -9,7 +8,7 @@
         <mat-label>조직 목록</mat-label>
         <mat-select formControlName="selectedCompany">
           @for (company of companies; track company) {
-          <mat-option [value]="company">{{company}}</mat-option>
+          <mat-option [value]="company">{{ company }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -17,55 +16,59 @@
       <div>
         <label> 권한 </label>
         <mat-radio-group formControlName="auth">
-          <mat-radio-button value="admin">
-            어드민 권한
-          </mat-radio-button>
-          <mat-radio-button value="user">
-            사용자 권한
-          </mat-radio-button>
+          <mat-radio-button value="admin"> 어드민 권한 </mat-radio-button>
+          <mat-radio-button value="user"> 사용자 권한 </mat-radio-button>
         </mat-radio-group>
       </div>
 
       <div class="sign-up-container__form">
         <mat-form-field>
-          <input matInput placeholder="Email (example@email.com)" required formControlName="email">
+          <input
+            matInput
+            placeholder="Email (example@email.com)"
+            required
+            formControlName="email"
+          />
           @if(signUpForm.controls['email'].hasError('required')){
-          <mat-error>
-            * 입력해주세요.
-          </mat-error>
+          <mat-error> * 입력해주세요. </mat-error>
           }
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput required type="password" placeholder="Password" minlength="6" maxlength="15"
-            formControlName="password">
+          <input
+            matInput
+            required
+            type="password"
+            placeholder="Password"
+            minlength="6"
+            maxlength="15"
+            formControlName="password"
+          />
           @if(signUpForm.controls['password'].hasError('minlength') ||
           signUpForm.controls['password'].hasError('maxlength')){
-          <mat-error>
-            * 비밀번호는 6자에서 15자 사이여야 합니다.
-          </mat-error>
+          <mat-error> * 비밀번호는 6자에서 15자 사이여야 합니다. </mat-error>
           }
         </mat-form-field>
 
-
-
         <mat-form-field>
-          <input matInput required type="password" placeholder="Confirm Password" formControlName="confirmPassword">
+          <input
+            matInput
+            required
+            type="password"
+            placeholder="Confirm Password"
+            formControlName="confirmPassword"
+          />
           @if(signUpForm.controls['confirmPassword'].hasError('minlength') ||
           signUpForm.controls['confirmPassword'].hasError('maxlength')){
-          <mat-error>
-            * 비밀번호는 6자에서 15자 사이여야 합니다.
-          </mat-error>
-          }
-          @if(signUpForm.errors){
+          <mat-error> * 비밀번호는 6자에서 15자 사이여야 합니다. </mat-error>
+          } @if(signUpForm.errors){
           <mat-error>비밀번호가 일치하지 않습니다.</mat-error>
           }
         </mat-form-field>
-
       </div>
       <div class="sign-up-container__footer">
-        <button mat-button type="submit"> 회원가입 </button>
-        <button mat-button type="button" (click)="cancel()"> 취소 </button>
+        <button mat-button type="submit">회원가입</button>
+        <button mat-button type="button" (click)="cancel()">취소</button>
       </div>
     </form>
   </mat-card>

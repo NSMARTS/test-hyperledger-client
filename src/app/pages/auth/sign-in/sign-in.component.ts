@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MaterialsModule } from '../../../materials/materials.module';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { merge } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
 @Component({
