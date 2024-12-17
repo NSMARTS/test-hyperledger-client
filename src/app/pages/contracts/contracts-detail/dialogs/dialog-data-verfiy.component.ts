@@ -46,7 +46,6 @@ export class DialogDataVerifyComponent {
       alert(`Please, upload the '.pdf' file.`);
       return;
     }
-    // this.isLoadingResults = true;
 
     this.currentFile = file;
     this.fileName = this.currentFile.name;

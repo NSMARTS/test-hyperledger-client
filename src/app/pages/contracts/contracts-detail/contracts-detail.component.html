@@ -1,28 +1,23 @@
-<p>{{contractInfo()?.title}}</p>
-<p>{{contractInfo()?.receiverA?.email}}</p>
-<p>{{contractInfo()?.statusA}}</p>
-@if(userInfo()?._id === contractInfo()?.receiverA?._id && contractInfo()?.statusA !== 'signed'){
-<button mat-button (click)="openDialog('a','sign')">Sign</button>
-}
-@if(contractInfo()?.statusA === 'signed'){
-<button mat-button (click)="openDialog('a','detail')">Detail</button>
-}
-
-@if(contractInfo()?.statusA === 'signed'){
+<p>{{ contractInfo()?.title }}</p>
+<p>{{ contractInfo()?.receiverA?.email }}</p>
+<p>{{ contractInfo()?.statusA }}</p>
+@if(userInfo()?._id === contractInfo()?.receiverA?._id &&
+contractInfo()?.statusA !== 'signed'){
+<button mat-button (click)="openDialog('a', 'sign')">Sign</button>
+} @if(contractInfo()?.statusA === 'signed'){
+<button mat-button (click)="openDialog('a', 'detail')">Detail</button>
+} @if(contractInfo()?.statusA === 'signed'){
 <button mat-button (click)="openVerify('a')">Verify</button>
 }
 
-<p>{{contractInfo()?.receiverB?.email}}</p>
-<p>{{contractInfo()?.statusB}}</p>
-@if((userInfo()?._id === contractInfo()?.receiverB?._id )&& contractInfo()?.statusB !== 'signed'){
-<button mat-button (click)="openDialog('b','sign')">Sign</button>
-}
-
-@if(contractInfo()?.statusB === 'signed'){
-<button mat-button (click)="openDialog('b','detail')">Detail</button>
-}
-
-@if(contractInfo()?.statusB === 'signed'){
+<p>{{ contractInfo()?.receiverB?.email }}</p>
+<p>{{ contractInfo()?.statusB }}</p>
+@if((userInfo()?._id === contractInfo()?.receiverB?._id )&&
+contractInfo()?.statusB !== 'signed'){
+<button mat-button (click)="openDialog('b', 'sign')">Sign</button>
+} @if(contractInfo()?.statusB === 'signed'){
+<button mat-button (click)="openDialog('b', 'detail')">Detail</button>
+} @if(contractInfo()?.statusB === 'signed'){
 <button mat-button (click)="openVerify('b')">Verify</button>
 }
 

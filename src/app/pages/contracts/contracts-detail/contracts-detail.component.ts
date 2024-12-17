@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   ElementRef,
-  Inject,
   ViewChild,
   WritableSignal,
   effect,
