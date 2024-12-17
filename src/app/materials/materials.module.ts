@@ -81,7 +81,7 @@ import { MatSliderModule } from '@angular/material/slider';
     MatRadioModule,
     MatProgressBarModule,
     MatSlideToggleModule,
-    MatSliderModule
+    MatSliderModule,
   ],
 })
-export class MaterialsModule { }
+export class MaterialsModule {}

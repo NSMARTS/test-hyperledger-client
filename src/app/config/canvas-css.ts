@@ -1,8 +1,7 @@
-
 export const CANVAS_CONFIG = {
   fullSize: {
     width: 0,
-    height: 0
+    height: 0,
   },
 
   thumbnailMaxSize: 150,
@@ -14,6 +13,5 @@ export const CANVAS_CONFIG = {
   minZoomScale: 0.1,
   sidebarWidth: 175,
   toolbarHeight: 64,
-  navHeight: 71
+  navHeight: 71,
 };
-

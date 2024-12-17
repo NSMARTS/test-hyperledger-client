@@ -1,10 +1,8 @@
 <header>
   <div class="header">
     <p>
-      @if(!userInfo()){
-      main
-      }@else{
-      {{companyName}}
+      @if(!userInfo()){ main }@else{
+      {{ companyName }}
       }
     </p>
     <div class="header_router">
@@ -19,7 +17,6 @@
       }
       <a (click)="signOut()">로그아웃</a>
       }
-
     </div>
   </div>
 </header>
