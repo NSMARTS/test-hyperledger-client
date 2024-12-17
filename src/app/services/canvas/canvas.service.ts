@@ -350,10 +350,8 @@ export class CanvasService {
         oldPoint = newPoint;
         points.push(oldPoint[0]); // x
         points.push(oldPoint[1]); // y
-        // console.log(points)
         drawingService.move(sourceCtx, points, tool, scale, sourceCanvas); // scale: eraser marker 정확히 지우기 위함.
         event.preventDefault();
-        // console.log(points)
       }
     }
 
@@ -399,8 +397,6 @@ export class CanvasService {
       clear(sourceCanvas, scale);
 
       points = [];
-
-      // console.log('upEvent', points)
     }
     /**
      * canvas 초기화

@@ -6,22 +6,17 @@ import * as pdfjsLib from 'pdfjs-dist';
 pdfjsLib.GlobalWorkerOptions.workerSrc = environment.workerSRC;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PdfService {
   pdfFile = signal<File | null>(null);
   pdfInfo = signal<any | null>(null);
-  pdfLength = signal<number>(0)
-  currentPage = signal<number>(1)
-  zoomScale = signal<number>(1)
+  pdfLength = signal<number>(0);
+  currentPage = signal<number>(1);
+  zoomScale = signal<number>(1);
 
   constructor() {
     // pdfjsLib.GlobalWorkerOptions.workerSrc = 'assets/lib/build/pdf.worker.mjs';
-    effect(() => {
-      if (this.pdfInfo()) {
-        console.log(this.pdfInfo())
-      }
-    })
   }
 
   async readFile(file: File) {
@@ -29,7 +24,7 @@ export class PdfService {
     const CMAP_PACKED = true;
     const pdfPages = [];
 
-    this.pdfFile.update(() => file)
+    this.pdfFile.update(() => file);
     const fileReader = new FileReader();
     fileReader.onload = async (e) => {
       const arrayBuffer: ArrayBuffer | null = fileReader.result as ArrayBuffer;
@@ -37,20 +32,17 @@ export class PdfService {
         const loadingTask = pdfjsLib.getDocument({
           data: arrayBuffer,
           cMapUrl: CMAP_URL,
-          cMapPacked: CMAP_PACKED
+          cMapPacked: CMAP_PACKED,
         });
 
         const pdfDocument = await loadingTask.promise;
         await this.storePdfInfo(pdfDocument);
         this.pdfLength.update(() => pdfDocument.numPages);
         this.currentPage.set(1);
-
       }
     };
     fileReader.readAsArrayBuffer(file);
-
   }
-
 
   /**
    * arraybuffer 형식으로 들어온 pdf를 pdfjs를 활용해 정보를 가져와
@@ -74,26 +66,25 @@ export class PdfService {
       pdfPages: pdfPages,
     }));
     // pdf전체 길이 보관
-    this.pdfLength.update(() => pdfDocument.numPages)
+    this.pdfLength.update(() => pdfDocument.numPages);
     // 현재 페이지 1로 초기화
-    this.currentPage.set(1)
+    this.currentPage.set(1);
   }
 
   /**
-   * 
-   * @param pdfViewer 
+   *
+   * @param pdfViewer
    * @param isEditMode // isEditMode가 true 면, dialog에서 사용 중, 캔버스 크기가 다르다.
    */
   async pdfRender(pdfViewer: ElementRef<HTMLCanvasElement>) {
-
     try {
-      const page = await this.pdfInfo().pdfPages[this.currentPage() - 1]
+      const page = await this.pdfInfo().pdfPages[this.currentPage() - 1];
       const viewport = page.getViewport({ scale: 1 });
       const canvas = pdfViewer?.nativeElement;
       const context = await canvas?.getContext('2d')!;
 
       // Canvas의 크기와 내용 초기화
-      this.clearCanvas(canvas)
+      this.clearCanvas(canvas);
 
       canvas.width = viewport.width;
       canvas.height = viewport.height;
@@ -116,21 +107,18 @@ export class PdfService {
     } catch (error) {
       console.error('Rendering failed:', error);
     }
-
-  };
+  }
 
   /**
    * Canvas의 크기와 내용 초기화
-   * @param canvas 
+   * @param canvas
    */
-  clearCanvas(
-    canvas: HTMLCanvasElement,
-  ) {
+  clearCanvas(canvas: HTMLCanvasElement) {
     canvas.width = 0;
     canvas.height = 0;
     const context = canvas.getContext('2d');
-    if (context) { // context가 존재하는지 체크
-      console.log(context)
+    if (context) {
+      // context가 존재하는지 체크
       context.clearRect(0, 0, canvas.width, canvas.height);
     }
   }
@@ -144,7 +132,7 @@ export class PdfService {
   memoryRelease() {
     // pdf 업로드 된게 없으면 취소
     if (this.pdfInfo()?.pdfPages.length < 1) {
-      return
+      return;
     }
 
     this.pdfInfo().pdfDocument.cleanup();
@@ -157,9 +145,8 @@ export class PdfService {
     this.pdfInfo.update(() => {
       return {
         pdfDocument: {} as PDFDocumentProxy,
-        pdfPages: []
-      }
-    })
+        pdfPages: [],
+      };
+    });
   }
-
 }
