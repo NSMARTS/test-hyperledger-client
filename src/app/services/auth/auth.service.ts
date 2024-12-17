@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  WritableSignal,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { Injectable, WritableSignal, inject, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';

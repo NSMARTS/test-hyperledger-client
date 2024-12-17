@@ -10,26 +10,28 @@ export const routes: Routes = [
     children: [
       {
         path: 'orders',
-        loadChildren: () => import('./pages/orders/routes').then((m) => m.ORDERS_ROUTES),
+        loadChildren: () =>
+          import('./pages/orders/routes').then((m) => m.ORDERS_ROUTES),
       },
       {
         path: 'contracts',
-        loadChildren: () => import('./pages/contracts/routes').then((m) => m.CONTRACTS_ROUTES),
-      }
-    ]
+        loadChildren: () =>
+          import('./pages/contracts/routes').then((m) => m.CONTRACTS_ROUTES),
+      },
+    ],
   },
   {
     path: 'sign-up',
     loadComponent: () =>
       import('./pages/auth/sign-up/sign-up.component').then(
         (m) => m.SignUpComponent
-      )
+      ),
   },
   {
     path: 'sign-in',
     loadComponent: () =>
       import('./pages/auth/sign-in/sign-in.component').then(
         (m) => m.SignInComponent
-      )
-  }
+      ),
+  },
 ];

@@ -312,10 +312,6 @@ export class CanvasService {
       drawingService.start(sourceCtx, points, tool);
 
       if (tool.type == 'pointer') {
-        // eventBusService.emit(new EventData('gen:newDrawEvent', {
-        //   points: oldPoint,
-        //   tool
-        // }));
         // 포인터일 경우 end가 아닌 start와 move 때 socket으로 전송
         merge(
           fromEvent(sourceCanvas, 'mousemove'),

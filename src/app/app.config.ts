@@ -6,13 +6,18 @@ import { routes } from './app.routes';
 import { MaterialsModule } from './materials/materials.module';
 import { environment } from '../environments/environment';
 import { JwtModule } from '@auth0/angular-jwt';
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  BrowserAnimationsModule,
+  provideAnimations,
+} from '@angular/platform-browser/animations';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 export function tokenGetter() {
   return localStorage.getItem(environment.tokenName);
 }
-
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,21 +25,16 @@ export const appConfig: ApplicationConfig = {
       JwtModule.forRoot({
         config: {
           tokenGetter: tokenGetter,
-          allowedDomains: [
-            environment.apiUrl,
-            environment.domain
-          ],
-          disallowedRoutes: [
-            '/api/v1/signIn', '/api/v1/signUp'
-          ],
+          allowedDomains: [environment.apiUrl, environment.domain],
+          disallowedRoutes: ['/api/v1/signIn', '/api/v1/signUp'],
         },
       }),
       MaterialsModule,
-      BrowserAnimationsModule,
+      BrowserAnimationsModule
     ),
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(routes),
     provideAnimations(),
     provideAnimationsAsync(),
-  ]
+  ],
 };

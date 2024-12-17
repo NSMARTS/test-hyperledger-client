@@ -1,11 +1,19 @@
 import { Injectable, signal } from '@angular/core';
 
-type ToolName = 'pointer' | 'pen' | 'highlighter' | 'eraser' | 'line' | 'circle' | 'rectangle' | 'roundedRectangle';
+type ToolName =
+  | 'pointer'
+  | 'pen'
+  | 'highlighter'
+  | 'eraser'
+  | 'line'
+  | 'circle'
+  | 'rectangle'
+  | 'roundedRectangle';
 
 export interface DrawTool {
-  type?: string,
-  color: string,
-  width: number
+  type?: string;
+  color: string;
+  width: number;
 }
 export interface ToolsConfig {
   [key: string]: DrawTool | undefined;
@@ -21,16 +29,15 @@ export interface ToolsConfig {
 
 // 변수 초기화값
 export interface EditInfo {
-  mode: string, // draw : 그리기 모드, move : 드래그 모드
-  tool: string,
-  toolsConfig: ToolsConfig,
+  mode: string; // draw : 그리기 모드, move : 드래그 모드
+  tool: string;
+  toolsConfig: ToolsConfig;
   toolDisabled: boolean;
   editDisabled: boolean;
 }
 
-
 const InitEditInfo: EditInfo = {
-  mode: 'draw', // draw, sync(여기? 또는 별도?) 
+  mode: 'draw', // draw, sync(여기? 또는 별도?)
   tool: 'pen', // eraser, ...
 
   toolsConfig: {
@@ -41,20 +48,17 @@ const InitEditInfo: EditInfo = {
   toolDisabled: false, // move인 경우
   editDisabled: false, // Edit 자체 동작을 모두 방지(권한 관련)
   // syncMode, ....
-}
-
-
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EditInfoService {
+  editInfo = signal<EditInfo>(InitEditInfo);
 
-  editInfo = signal<EditInfo>(InitEditInfo)
-
-  constructor() { }
+  constructor() {}
 
   getCurrentTool(tool: ToolName) {
-    return this.editInfo().toolsConfig[tool]
+    return this.editInfo().toolsConfig[tool];
   }
 }
