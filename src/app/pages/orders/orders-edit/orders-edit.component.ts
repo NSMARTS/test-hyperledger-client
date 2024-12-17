@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MaterialsModule } from '../../../materials/materials.module';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { OrderService } from '../../../services/order/order.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -10,29 +16,29 @@ import { ActivatedRoute, Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, MaterialsModule],
   templateUrl: './orders-edit.component.html',
-  styleUrl: './orders-edit.component.scss'
+  styleUrl: './orders-edit.component.scss',
 })
 export class OrdersEditComponent {
-  fb = inject(FormBuilder)
-  orderService = inject(OrderService)
-  router = inject(Router)
-  route = inject(ActivatedRoute)
+  fb = inject(FormBuilder);
+  orderService = inject(OrderService);
+  router = inject(Router);
+  route = inject(ActivatedRoute);
 
   foodList: any = [
     { name: '김치찌개', value: 'kimchi_soup', price: 10000, count: 0 },
     { name: '삼겹살', value: 'pork_belly', price: 11000, count: 0 },
     { name: '피자', value: 'pizza', price: 12000, count: 0 },
-    { name: '햄버거', value: 'hamburger', price: 13000, count: 0 }
+    { name: '햄버거', value: 'hamburger', price: 13000, count: 0 },
   ];
 
   form: FormGroup = this.fb.group({
     orders: this.fb.array([]),
     totalCount: [0],
-    to: ['', Validators.required]
+    to: ['', Validators.required],
   });
 
   get orders() {
-    return this.form.controls["orders"] as FormArray;
+    return this.form.controls['orders'] as FormArray;
   }
 
   ngOnInit() {
@@ -40,15 +46,17 @@ export class OrdersEditComponent {
     this.orderService.getOrderById(orderId).subscribe((res: any) => {
       this.form.patchValue({
         to: res.data.to,
-        totalCount: res.data.totalCount
+        totalCount: res.data.totalCount,
       });
       res.data.orders.forEach((orderItem: any) => {
-        this.orders.push(this.fb.group({
-          food: [orderItem.food, [Validators.required]],
-          name: [orderItem.name, Validators.required],
-          price: [orderItem.price, Validators.required],
-          count: [orderItem.count, Validators.required],
-        }));
+        this.orders.push(
+          this.fb.group({
+            food: [orderItem.food, [Validators.required]],
+            name: [orderItem.name, Validators.required],
+            price: [orderItem.price, Validators.required],
+            count: [orderItem.count, Validators.required],
+          })
+        );
       });
     });
   }
@@ -70,13 +78,15 @@ export class OrdersEditComponent {
   }
 
   onFoodSelect(event: any, index: number) {
-    const selectedFood = this.foodList.find((food: any) => food.value === event.value);
+    const selectedFood = this.foodList.find(
+      (food: any) => food.value === event.value
+    );
     if (selectedFood) {
       const foodFormGroup = this.orders.at(index) as FormGroup;
       foodFormGroup.patchValue({
         name: selectedFood.name,
         price: selectedFood.price,
-        count: selectedFood.count
+        count: selectedFood.count,
       });
       this.updateTotalCount();
     }
@@ -100,7 +110,7 @@ export class OrdersEditComponent {
 
   updateTotalCount() {
     let total = 0;
-    this.orders.controls.forEach(orderControl => {
+    this.orders.controls.forEach((orderControl) => {
       const order = orderControl.value;
       total += order.price * order.count;
     });
@@ -111,12 +121,11 @@ export class OrdersEditComponent {
     const orderId = this.route.snapshot.paramMap.get('id');
     this.orderService.updateOrder(orderId, this.form.value).subscribe({
       next: (res: any) => {
-        console.log(res);
         this.router.navigate(['/orders']);
       },
       error: (err: any) => {
         console.error(err);
-      }
+      },
     });
   }
 }

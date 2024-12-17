@@ -1,4 +1,10 @@
-import { DestroyRef, Injectable, WritableSignal, inject, signal } from '@angular/core';
+import {
+  DestroyRef,
+  Injectable,
+  WritableSignal,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, takeUntil, throttleTime } from 'rxjs';
 import { CANVAS_CONFIG } from '../../config/canvas-css';
@@ -6,20 +12,25 @@ import { PdfService } from '../pdf/pdf.service';
 import { ZoomService } from '../zoom/zoom.service';
 import { DrawingService } from '../drawing/drawing.service';
 import { DrawStoreService } from '../draw-store/draw-store.service';
-import { ContainerScroll, ContainerSize, Listener, initContainerScroll, initContainerSize } from '../../config/white-board.interface';
+import {
+  ContainerScroll,
+  ContainerSize,
+  Listener,
+  initContainerScroll,
+  initContainerSize,
+} from '../../config/white-board.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CanvasService {
+  pdfService = inject(PdfService);
+  zoomService = inject(ZoomService);
+  drawingService = inject(DrawingService);
+  drawStoreService = inject(DrawStoreService);
 
-  pdfService = inject(PdfService)
-  zoomService = inject(ZoomService)
-  drawingService = inject(DrawingService)
-  drawStoreService = inject(DrawStoreService)
-
-  pdfInfo = this.pdfService.pdfInfo
-  zoomScale: WritableSignal<number> = this.zoomService.zoomScale // 초기값은 1
+  pdfInfo = this.pdfService.pdfInfo;
+  zoomScale: WritableSignal<number> = this.zoomService.zoomScale; // 초기값은 1
 
   listenerSet: Listener[] = [];
 
@@ -31,11 +42,10 @@ export class CanvasService {
 
   destroyRef = inject(DestroyRef);
 
-  containerScroll = signal<ContainerScroll>(initContainerScroll) //썸네일 컨테이너 좌표
-  containerSize = signal<ContainerSize>(initContainerSize) //썸네일 컨테이너 좌표
+  containerScroll = signal<ContainerScroll>(initContainerScroll); //썸네일 컨테이너 좌표
+  containerSize = signal<ContainerSize>(initContainerSize); //썸네일 컨테이너 좌표
 
-  constructor() { }
-
+  constructor() {}
 
   get canvasFullSize(): any {
     return this._canvasFullSize;
@@ -49,15 +59,20 @@ export class CanvasService {
     // https://stackoverflow.com/questions/59592852/typescript-tsc-compiler-complaining-about-property-not-existing-despite-me-updat
     // Blink and WebKit.
     // Most of these APIs are deprecated and were removed shortly after Chrome 36.
-    const backingStoreRatio = ctx?.webkitBackingStorePixelRatio ||
+    const backingStoreRatio =
+      ctx?.webkitBackingStorePixelRatio ||
       ctx?.mozBackingStorePixelRatio ||
       ctx?.msBackingStorePixelRatio ||
       ctx?.oBackingStorePixelRatio ||
-      ctx?.backingStorePixelRatio || 1;
+      ctx?.backingStorePixelRatio ||
+      1;
 
     let deviceScale = 1;
     // ios의 경우는 어떤지 학생으로 check ~~ todo
-    if (navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Linux') > -1) {
+    if (
+      navigator.userAgent.indexOf('Android') > -1 ||
+      navigator.userAgent.indexOf('Linux') > -1
+    ) {
       deviceScale = devicePixelRatio / backingStoreRatio;
     }
 
@@ -69,24 +84,25 @@ export class CanvasService {
           - 각 thumbnail 별 canvas width/height
       ----------------------------------------*/
   getThumbnailSize(pageNum: number) {
-
-    const viewport = this.pdfInfo().pdfPages[pageNum - 1].getViewport({ scale: 1 });
+    const viewport = this.pdfInfo().pdfPages[pageNum - 1].getViewport({
+      scale: 1,
+    });
 
     const size = {
       width: 0,
       height: 0,
-      scale: 1 // thumbnail draw에서 사용할 scale (thumbnail과 100% pdf size의 비율)
+      scale: 1, // thumbnail draw에서 사용할 scale (thumbnail과 100% pdf size의 비율)
     };
 
     // landscape 문서 : 가로를 150px(thumbnailMaxSize)로 설정
     if (viewport.width > viewport.height) {
       size.width = CANVAS_CONFIG.thumbnailMaxSize;
-      size.height = size.width * viewport.height / viewport.width;
+      size.height = (size.width * viewport.height) / viewport.width;
     }
     // portrait 문서 : 세로를 150px(thumbnailMaxSize)로 설정
     else {
       size.height = CANVAS_CONFIG.thumbnailMaxSize;
-      size.width = size.height * viewport.width / viewport.height;
+      size.width = (size.height * viewport.width) / viewport.height;
     }
     size.scale = size.width / (viewport.width * CANVAS_CONFIG.CSS_UNIT);
 
@@ -97,11 +113,16 @@ export class CanvasService {
    * Main container관련 canvas Size 설정
    *
    */
-  setCanvasSize(pageNum: number, zoomScale: number, canvasContainer: HTMLDivElement, bgCanvas: HTMLCanvasElement) {
-    console.log(`>>> set Canvas Size: pageNum:${pageNum}`)
-
+  setCanvasSize(
+    pageNum: number,
+    zoomScale: number,
+    canvasContainer: HTMLDivElement,
+    bgCanvas: HTMLCanvasElement
+  ) {
     const pdfPage = this.pdfService.pdfInfo().pdfPages[pageNum - 1];
-    const canvasFullSize = pdfPage.getViewport({ scale: zoomScale * CANVAS_CONFIG.CSS_UNIT })!;
+    const canvasFullSize = pdfPage.getViewport({
+      scale: zoomScale * CANVAS_CONFIG.CSS_UNIT,
+    })!;
     canvasFullSize.width = Math.round(canvasFullSize.width);
     canvasFullSize.height = Math.round(canvasFullSize.height);
 
@@ -111,19 +132,21 @@ export class CanvasService {
         - deviceScale은 고려하지 않음
     -------------------------------------*/
     const containerSize = {
-      width: Math.min(CANVAS_CONFIG.maxContainerWidth - 285, canvasFullSize.width),  // 좌측 navigation width만큼 빼야 zoonIn 시 왼쪽이 전부 보임
-      height: Math.min(CANVAS_CONFIG.maxContainerHeight, canvasFullSize.height)
+      width: Math.min(
+        CANVAS_CONFIG.maxContainerWidth - 285,
+        canvasFullSize.width
+      ), // 좌측 navigation width만큼 빼야 zoonIn 시 왼쪽이 전부 보임
+      height: Math.min(CANVAS_CONFIG.maxContainerHeight, canvasFullSize.height),
     };
 
     // Canvas Container Size 조절
     canvasContainer.style.width = containerSize.width + 'px';
     canvasContainer.style.height = containerSize.height + 'px';
 
-
     // container와 canvas의 비율 => thumbnail window에 활용
     const ratio = {
       w: containerSize.width / canvasFullSize.width,
-      h: containerSize.height / canvasFullSize.height
+      h: containerSize.height / canvasFullSize.height,
     };
 
     /*---------------------------------------
@@ -134,60 +157,65 @@ export class CanvasService {
     bgCanvas.style.width = canvasFullSize.width + 'px';
     bgCanvas.style.height = canvasFullSize.height + 'px';
 
-
     // data update
     this._canvasFullSize = canvasFullSize;
-
 
     return ratio;
   }
 
-
   /**
-  *
-  * Canvas Container size 설정
-  *
-  * @param coverCanvas
-  * @param canvasContainer
-  * @returns
-  */
+   *
+   * Canvas Container size 설정
+   *
+   * @param coverCanvas
+   * @param canvasContainer
+   * @returns
+   */
   setContainerSize(canvasContainer: HTMLDivElement) {
     /*------------------------------------
         container Size
         - 실제 canvas 영역을 고려한 width와 height
     -------------------------------------*/
     const containerSize = {
-      width: Math.min(CANVAS_CONFIG.maxContainerWidth, this.canvasFullSize.width),
-      height: Math.min(CANVAS_CONFIG.maxContainerHeight, this.canvasFullSize.height)
+      width: Math.min(
+        CANVAS_CONFIG.maxContainerWidth,
+        this.canvasFullSize.width
+      ),
+      height: Math.min(
+        CANVAS_CONFIG.maxContainerHeight,
+        this.canvasFullSize.height
+      ),
     };
-
 
     // Canvas Container Size 조절
     canvasContainer.style.width = containerSize.width + 'px';
     canvasContainer.style.height = containerSize.height + 'px';
 
-
     // container와 canvas의 비율 => thumbnail window에 활용
     const ratio = {
       w: containerSize.width / this.canvasFullSize.width,
-      h: containerSize.height / this.canvasFullSize.height
+      h: containerSize.height / this.canvasFullSize.height,
     };
     return ratio;
   }
 
   /**
-     * Canvas에 event listener 추가
-     * @param {canvas element} sourceCanvas event를 받아들일 canvas
-     * @param {canvas element} targetCanvas event가 최종적으로 그려질 canvas
-     * @param {object} tool  사용 tool (type, color, width)
-     * @param {number} zoomScale 현재의 zoom scale
-     */
-  addEventHandler(sourceCanvas: HTMLCanvasElement, targetCanvas: HTMLCanvasElement, tool: any, zoomScale: number) {
-    console.log(">>>> Add Event handler:", tool, zoomScale);
+   * Canvas에 event listener 추가
+   * @param {canvas element} sourceCanvas event를 받아들일 canvas
+   * @param {canvas element} targetCanvas event가 최종적으로 그려질 canvas
+   * @param {object} tool  사용 tool (type, color, width)
+   * @param {number} zoomScale 현재의 zoom scale
+   */
+  addEventHandler(
+    sourceCanvas: HTMLCanvasElement,
+    targetCanvas: HTMLCanvasElement,
+    tool: any,
+    zoomScale: number
+  ) {
     const drawingService = this.drawingService;
     const drawStoreService = this.drawStoreService;
-    const sourceCtx = sourceCanvas.getContext("2d")!;
-    const targetCtx = targetCanvas.getContext("2d")!;
+    const sourceCtx = sourceCanvas.getContext('2d')!;
+    const targetCtx = targetCanvas.getContext('2d')!;
 
     let oldPoint: number[] = [];
     let newPoint: number[] = [];
@@ -210,11 +238,16 @@ export class CanvasService {
 
     for (const item of this.listenerSet) {
       if (item.id === sourceCanvas.id) {
-        sourceCanvas.removeEventListener(item.name, item.handler as EventListener);
+        sourceCanvas.removeEventListener(
+          item.name,
+          item.handler as EventListener
+        );
       }
     }
     // sourceCanvas가 동일한 경우에 대한 내용 삭제.
-    this.listenerSet = this.listenerSet.filter(item => item.id !== sourceCanvas.id);
+    this.listenerSet = this.listenerSet.filter(
+      (item) => item.id !== sourceCanvas.id
+    );
 
     sourceCanvas.addEventListener('mousedown', downEvent);
     sourceCanvas.addEventListener('mousemove', moveEvent);
@@ -224,20 +257,46 @@ export class CanvasService {
     sourceCanvas.addEventListener('touchmove', moveEvent);
     sourceCanvas.addEventListener('touchend', upEvent);
 
+    this.listenerSet.push({
+      id: sourceCanvas.id,
+      name: 'mousedown',
+      handler: downEvent,
+    });
+    this.listenerSet.push({
+      id: sourceCanvas.id,
+      name: 'mousemove',
+      handler: moveEvent,
+    });
+    this.listenerSet.push({
+      id: sourceCanvas.id,
+      name: 'mouseup',
+      handler: upEvent,
+    });
+    this.listenerSet.push({
+      id: sourceCanvas.id,
+      name: 'mouseout',
+      handler: upEvent,
+    });
+    this.listenerSet.push({
+      id: sourceCanvas.id,
+      name: 'touchstart',
+      handler: downEvent,
+    });
+    this.listenerSet.push({
+      id: sourceCanvas.id,
+      name: 'touchmove',
+      handler: moveEvent,
+    });
+    this.listenerSet.push({
+      id: sourceCanvas.id,
+      name: 'touchend',
+      handler: upEvent,
+    });
 
-    this.listenerSet.push({ id: sourceCanvas.id, name: 'mousedown', handler: downEvent });
-    this.listenerSet.push({ id: sourceCanvas.id, name: 'mousemove', handler: moveEvent });
-    this.listenerSet.push({ id: sourceCanvas.id, name: 'mouseup', handler: upEvent });
-    this.listenerSet.push({ id: sourceCanvas.id, name: 'mouseout', handler: upEvent });
-    this.listenerSet.push({ id: sourceCanvas.id, name: 'touchstart', handler: downEvent });
-    this.listenerSet.push({ id: sourceCanvas.id, name: 'touchmove', handler: moveEvent });
-    this.listenerSet.push({ id: sourceCanvas.id, name: 'touchend', handler: upEvent });
-
-
-    // console.log(this.listenerSet);
-
-    function downEvent(this: HTMLCanvasElement, event: MouseEvent | TouchEvent) {
-      console.log('downEvent!!')
+    function downEvent(
+      this: HTMLCanvasElement,
+      event: MouseEvent | TouchEvent
+    ) {
       event.preventDefault();
       isDown = true;
       // 시작시 touch/mouse가 동시에 발생할 때 (chrome dev 등)
@@ -261,26 +320,30 @@ export class CanvasService {
         merge(
           fromEvent(sourceCanvas, 'mousemove'),
           fromEvent(sourceCanvas, 'touchmove')
-        ).pipe(
-          takeUntil(fromEvent(sourceCanvas, 'mouseup')),
-          takeUntil(fromEvent(sourceCanvas, 'mouseout')),
-          takeUntil(fromEvent(sourceCanvas, 'touchend')),
-          throttleTime(30),
-          takeUntilDestroyed()
-        ).subscribe(() => {
-          // eventBusService.emit(new EventData('gen:newDrawEvent', {
-          //   points: oldPoint,
-          //   tool
-          // }));
-        });
+        )
+          .pipe(
+            takeUntil(fromEvent(sourceCanvas, 'mouseup')),
+            takeUntil(fromEvent(sourceCanvas, 'mouseout')),
+            takeUntil(fromEvent(sourceCanvas, 'touchend')),
+            throttleTime(30),
+            takeUntilDestroyed()
+          )
+          .subscribe(() => {
+            // eventBusService.emit(new EventData('gen:newDrawEvent', {
+            //   points: oldPoint,
+            //   tool
+            // }));
+          });
       }
       startTime = Date.now();
       event.preventDefault();
-    };
-
+    }
 
     // kje: todo: mouse와 touch가 move 도중에 중복되는 경우는 없는지 확인...
-    function moveEvent(this: HTMLCanvasElement, event: MouseEvent | TouchEvent) {
+    function moveEvent(
+      this: HTMLCanvasElement,
+      event: MouseEvent | TouchEvent
+    ) {
       if (!isDown) return;
       newPoint = getPoint(isTouch ? event : event, this, scale);
       if (oldPoint[0] !== newPoint[0] || oldPoint[1] !== newPoint[1]) {
@@ -292,14 +355,14 @@ export class CanvasService {
         event.preventDefault();
         // console.log(points)
       }
-    };
+    }
 
     function upEvent() {
       if (!isDown) return;
       isDown = false;
       isTouch = false;
 
-      sourceCtx.globalAlpha = 1
+      sourceCtx.globalAlpha = 1;
 
       drawingService.end(targetCtx, points, tool);
 
@@ -309,7 +372,7 @@ export class CanvasService {
       -----------------------------------------------*/
 
       if (tool.type == 'pointer') {
-        sourceCtx.shadowColor = "";
+        sourceCtx.shadowColor = '';
         sourceCtx.shadowBlur = 0;
         tool.type = 'pointerEnd';
         // eventBusService.emit(new EventData('gen:newDrawEvent', {
@@ -325,10 +388,10 @@ export class CanvasService {
       const drawingEvent = {
         points,
         tool,
-        timeDiff: endTime - startTime!
+        timeDiff: endTime - startTime!,
       };
 
-      drawStoreService.setDrawEvent(1, drawingEvent)
+      drawStoreService.setDrawEvent(1, drawingEvent);
       // Generate Event Emitter: new Draw 알림
       // eventBusService.emit(new EventData('gen:newDrawEvent', drawingEvent));
 
@@ -338,7 +401,7 @@ export class CanvasService {
       points = [];
 
       // console.log('upEvent', points)
-    };
+    }
     /**
      * canvas 초기화
      * @param {canvas element} targetCanvas
@@ -347,7 +410,12 @@ export class CanvasService {
     function clear(targetCanvas: HTMLCanvasElement, zoomScale: number) {
       const targetCtx = targetCanvas.getContext('2d')!;
       const scale = zoomScale || 1;
-      targetCtx.clearRect(0, 0, targetCanvas.width / scale, targetCanvas.height / scale);
+      targetCtx.clearRect(
+        0,
+        0,
+        targetCanvas.width / scale,
+        targetCanvas.height / scale
+      );
     }
 
     /**
@@ -357,7 +425,11 @@ export class CanvasService {
      * @param {*} target event를 받아들이는 canvas
      * @param {*} zoomScale 현재의 zoom scale
      */
-    function getPoint(event: MouseEvent | TouchEvent, target: HTMLCanvasElement, zoomScale: number) {
+    function getPoint(
+      event: MouseEvent | TouchEvent,
+      target: HTMLCanvasElement,
+      zoomScale: number
+    ) {
       const canvasRect = target.getBoundingClientRect();
       const scale = zoomScale || 1;
 
@@ -375,8 +447,8 @@ export class CanvasService {
 
       const point = [
         Math.round((clientX - canvasRect.left) / scale),
-        Math.round((clientY - canvasRect.top) / scale)
-      ]
+        Math.round((clientY - canvasRect.top) / scale),
+      ];
       return point;
     }
   }

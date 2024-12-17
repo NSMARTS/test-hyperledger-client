@@ -1,6 +1,12 @@
 import { OrderService } from '../../services/order/order.service';
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, inject, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { MaterialsModule } from '../../materials/materials.module';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -13,14 +19,22 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, MaterialsModule],
   templateUrl: './orders.component.html',
-  styleUrl: './orders.component.scss'
+  styleUrl: './orders.component.scss',
 })
 export class OrdersComponent {
-  route = inject(Router)
-  orderService = inject(OrderService)
+  route = inject(Router);
+  orderService = inject(OrderService);
 
-  displayedColumns: string[] = ['createdAt', 'writer', 'totalCount', 'to', 'bts'];
-  dataSource: WritableSignal<MatTableDataSource<any>> = signal<MatTableDataSource<any>>(new MatTableDataSource());
+  displayedColumns: string[] = [
+    'createdAt',
+    'writer',
+    'totalCount',
+    'to',
+    'bts',
+  ];
+  dataSource: WritableSignal<MatTableDataSource<any>> = signal<
+    MatTableDataSource<any>
+  >(new MatTableDataSource());
 
   pageSize = signal<number>(10);
   resultsLength = signal<number>(0);
@@ -30,10 +44,9 @@ export class OrdersComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor() { }
+  constructor() {}
 
   ngAfterViewInit() {
-
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
@@ -42,7 +55,7 @@ export class OrdersComponent {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults.set(true);
-          return this.fetchOrders()
+          return this.fetchOrders();
         }),
         map((res: any) => {
           // Flip flag to show that loading has finished.
@@ -59,18 +72,22 @@ export class OrdersComponent {
           this.resultsLength.set(res.data.length);
           // this.calculateTenure(res.myEmployeeList);
           return res.data;
-        }),
+        })
       )
-      .subscribe((data: any) => this.dataSource.set(new MatTableDataSource(data)))
+      .subscribe((data: any) =>
+        this.dataSource.set(new MatTableDataSource(data))
+      );
   }
 
   fetchOrders() {
-    return this.orderService.getOrders(
-      this.sort.active,
-      this.sort.direction,
-      this.paginator.pageIndex,
-      this.paginator.pageSize,
-    ).pipe(catchError(() => of(null)));
+    return this.orderService
+      .getOrders(
+        this.sort.active,
+        this.sort.direction,
+        this.paginator.pageIndex,
+        this.paginator.pageSize
+      )
+      .pipe(catchError(() => of(null)));
   }
 
   refreshTable() {
@@ -82,21 +99,20 @@ export class OrdersComponent {
   }
 
   updateOrder(id: string) {
-    this.route.navigate([`/orders/${id}/edit`])
+    this.route.navigate([`/orders/${id}/edit`]);
   }
   deleteOrder(id: string) {
     this.isLoadingResults.set(true);
     this.orderService.deleteOrder(id).subscribe({
       next: (res: any) => {
-        console.log(res)
-        this.refreshTable()
+        this.refreshTable();
       },
       error: (err: any) => {
-        console.error(err)
+        console.error(err);
       },
       complete: () => {
         this.isLoadingResults.set(false);
-      }
-    })
+      },
+    });
   }
 }

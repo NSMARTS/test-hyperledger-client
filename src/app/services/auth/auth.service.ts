@@ -1,4 +1,10 @@
-import { Injectable, WritableSignal, effect, inject, signal } from '@angular/core';
+import {
+  Injectable,
+  WritableSignal,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -6,30 +12,23 @@ import { catchError, of, shareReplay, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
-  router = inject(Router)
+  router = inject(Router);
   private baseUrl = environment.apiUrl;
 
-  private http = inject(HttpClient)
+  private http = inject(HttpClient);
   private jwtHelper = inject(JwtHelperService);
   userInfo: WritableSignal<any | null> = signal<any | null>(null);
 
   constructor() {
     this.loadToken();
-
-    effect(() => {
-      if (this.userInfo()) {
-        console.log(this.userInfo())
-      }
-    })
   }
 
   signUp(signUpForm: any) {
     return this.http.post(this.baseUrl + '/auth/signUp', signUpForm).pipe(
-      catchError(error => {
+      catchError((error) => {
         console.error('Sign Up Error:', error);
         return of(null);
       })
@@ -40,18 +39,16 @@ export class AuthService {
     return this.http.post(this.baseUrl + '/auth/signIn', signInForm).pipe(
       tap((res: any) => this.setToken(res.token)),
       shareReplay(1), // 데이터 캐싱
-      catchError(error => {
+      catchError((error) => {
         console.error('Sign In Error:', error);
         return of(null);
       })
     );
   }
 
-
-
   logOut(): void {
     this.removeToken();
-    this.router.navigate(['/sign-in'])
+    this.router.navigate(['/sign-in']);
   }
 
   removeToken(): void {
@@ -64,8 +61,8 @@ export class AuthService {
   }
 
   /**
-    *  주어진 토큰으로 사용자 정보를 설정하고 로컬 스토리지에 저장하는 메서드
-    * */
+   *  주어진 토큰으로 사용자 정보를 설정하고 로컬 스토리지에 저장하는 메서드
+   * */
   private handleToken(token: string | null): void {
     if (token) {
       // 토큰이 있으면 사용자 정보 및 로컬스토리지에 저장
@@ -77,9 +74,8 @@ export class AuthService {
     }
   }
 
-
   isLoggedIn(): boolean {
-    const token = this.getToken()
+    const token = this.getToken();
     const isLoggedIn = !!token && !this.jwtHelper.isTokenExpired(token);
     if (!isLoggedIn) {
       this.logOut();
@@ -95,5 +91,4 @@ export class AuthService {
     const token = this.getToken();
     this.handleToken(token);
   }
-
 }
